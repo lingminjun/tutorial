@@ -8,9 +8,9 @@ class DmozSpider(Spider):
     name = "dmoz"
     allowed_domains = ["list.tmall.com"]
 
-    start_urls = [
-        "https://list.tmall.com/search_product.htm?q=%C1%AC%D2%C2%C8%B9&sort=s&style=g&type=pc&s=0",
-    ]
+    # start_urls = [
+    #     "https://list.tmall.com/search_product.htm?q=%C1%AC%D2%C2%C8%B9&sort=s&style=g&type=pc&s=0",
+    # ]
 
     '''
     scrapy spider参数使用该-a选项在爬网命令中传递。例如：
@@ -34,14 +34,14 @@ class DmozSpider(Spider):
 
    
     #  针对规则的url开始爬取
-    # def start_requests(self):
-    #     for keyword in self.settings.get('KEYWORDS'):
-    #         print(keyword)
-    #         for page in range(0, self.settings.get('MAX_PAGE')):
-    #             offset = page * 60
-    #             url = "https://list.tmall.com/search_product.htm?q=" + quote(keyword) + "&sort=s&style=g&type=pc&s=" + str(offset)
-    #             print(url)
-    #             yield Request(url=url, callback=self.parse)
+    def start_requests(self):
+        for keyword in self.settings.get('KEYWORDS'):
+            print(keyword)
+            for page in range(0, self.settings.get('MAX_PAGE')):
+                offset = page * 60
+                url = "https://list.tmall.com/search_product.htm?q=" + quote(keyword) + "&sort=s&style=g&type=pc&s=" + str(offset)
+                print(url)
+                yield Request(url=url, callback=self.parse)
 
     '''
     # 其他列表
@@ -134,26 +134,34 @@ class DmozSpider(Spider):
         '''
         for sel in response.xpath('//div[@class="product  "]'):
             item = TutorialItem()
-            item['spuid'] = sel.xpath('./@data-id').extract()
+            item['spuid'] = self.getxpathvalue(sel.xpath('./@data-id').extract())
             
-            item['url'] = sel.xpath('div[@class="product-iWrap"]/div[@class="productImg-wrap"]/a/@href').extract()
+            item['url'] = self.getxpathlink(sel.xpath('div[@class="product-iWrap"]/div[@class="productImg-wrap"]/a/@href').extract())
             
-            item['img0'] = sel.xpath('div[@class="product-iWrap"]/div[@class="productImg-wrap"]/a/img/@src').extract()
+            item['img0'] = self.getxpathlink(sel.xpath('div[@class="product-iWrap"]/div[@class="productImg-wrap"]/a/img/@src').extract())
             
-            item['price'] = sel.xpath('div[@class="product-iWrap"]/p[@class="productPrice"]/em/@title').extract()
-            item['name'] = sel.xpath('div[@class="product-iWrap"]/p[@class="productTitle"]/a/text()').extract()
+            item['price'] = self.getxpathvalue(sel.xpath('div[@class="product-iWrap"]/p[@class="productPrice"]/em/@title').extract())
+            item['name'] = self.getxpathvalue(sel.xpath('div[@class="product-iWrap"]/p[@class="productTitle"]/a/text()').extract())
             
-            item['merchant'] = sel.xpath('div[@class="product-iWrap"]/div[@class="productShop"]/a/text()').extract()
+            item['merchant'] = self.getxpathvalue(sel.xpath('div[@class="product-iWrap"]/div[@class="productShop"]/a/text()').extract())
 
             idx = 0
             for b in sel.xpath('div[@class="product-iWrap"]/div[@class="productThumb clearfix"]/div[@class="proThumb-wrap"]/p[@class="ks-switchable-content"]/b'):  # extracts all <p> inside
                 # print b.extract()
        
-                item['skuid'+str(idx)] = b.xpath('./@data-sku').extract()
+                item['colorskuid'+str(idx)] = self.getxpathvalue(b.xpath('./@data-sku').extract())
+                item['colorimg'+str(idx)] = self.getxpathlink(b.xpath('./img/@src').extract())
+
                 idx = idx + 1
                 # item['img0'] = "https://" + b.xpath('/img@src').extract()
          
             yield item
 
+    def getxpathvalue(self,selv):
+        return str(selv).strip().strip('[]\'').strip()
 
-
+    def getxpathlink(self,selv):
+        tempstr = str(selv).strip().strip('[]\'').strip()
+        if (not tempstr.startswith('http')):
+            return "https:" + tempstr
+        return tempstr

@@ -95,5 +95,5 @@ DOWNLOADER_MIDDLEWARES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 # 爬虫针对tmall搜索，所以需要输入查询词
-KEYWORDS = ['连衣裙']
-MAX_PAGE = 1
+KEYWORDS = ['连衣裙', '半身裙']
+MAX_PAGE = 3

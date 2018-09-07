@@ -13,6 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from scrapy.http import HtmlResponse
 import time
+import weakref
 
 
 class TutorialSpiderMiddleware(object):
@@ -67,23 +68,17 @@ class TutorialDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
-    scroll_step = 0
+    # scroll_step = 0
 
     def __init__(self, timeout=None, service_args=[]):
-        
-        self.driver = webdriver.Chrome('/Users/lingminjun/chromedriver/chromedriver')
-        self.wait = WebDriverWait(self.driver, 20) # 30秒后超时
-
         # self.driver.implicitly_wait(10) #   设置智能等待10秒
-
         # self.timeout = timeout
         # self.browser = webdriver.PhantomJS(service_args=service_args)
         # self.browser.set_window_size(1400, 700)
         # self.browser.set_page_load_timeout(self.timeout)
         # self.wait = WebDriverWait(self.browser, self.timeout)
+        pass
 
-    def __del__(self):
-        self.driver.close()
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -99,10 +94,14 @@ class TutorialDownloaderMiddleware(object):
         :return: HtmlResponse
         """
         print('self.wait.until is load html')
+
+        driver = webdriver.Chrome('/Users/lingminjun/chromedriver/chromedriver')
+    
         # self.browser.get(request.url)
-        self.driver.get(request.url)
+        driver.get(request.url)
+
         # 打开页面后，滑动至页面底部
-        return self.scroll_until_loaded(request, spider)
+        return self.scroll_until_loaded(request, spider, driver)
 
     def process_response(self, request, response, spider):
         return response
@@ -121,25 +120,39 @@ class TutorialDownloaderMiddleware(object):
         spider.logger.info('Spider opened: %s' % spider.name)
 
     #  模拟浏览器页面滚到页面底部的行为
-    def scroll_until_loaded(self, request, spider):
+    def scroll_until_loaded(self, request, spider, driver):
         # check_height = self.driver.execute_script("return document.body.scrollHeight;")
         # print("页面已经加载完成。高度为" + str(check_height))
+        driver.implicitly_wait(2)
+
+        wait = WebDriverWait(driver, 20)    # 30秒后超时
+        step = StepItem(driver)
+
         while True:
-            self.execute_scroll_step()
+            step.execute_scroll_step()
             try:
                 # WebDriverWait(browser, 2).until(
                 #         lambda driver: driver.find_element_by_tag_name('body'))
-                self.wait.until(lambda driver: self.execute_scroll_step() )
-
+                wait.until(lambda driver: step.execute_scroll_step() )
+                break
             except TimeoutException:
                 break
             
-        return HtmlResponse(url=request.url, body=self.driver.page_source, request=request, encoding='utf-8', status=200)
+        return HtmlResponse(url=request.url, body=driver.page_source, request=request, encoding='utf-8', status=200)
             
+    
+class StepItem():
+    scroll_step = 0
+
+    def __init__(self, driver):
+        self.driver = driver
+
+    def __del__(self):
+        self.driver.close()
+
     def execute_scroll_step(self):
         self.scroll_step = self.scroll_step + 200   # 每次滚动200像素
         self.driver.execute_script("window.scrollTo(0, " + str(self.scroll_step) + ");")
         height = self.driver.execute_script("return document.body.scrollHeight;")
-        return self.scroll_step > height + 50
-    
-            
+        print("height="+str(height) + "; step=" + str(self.scroll_step))
+        return self.scroll_step > height + 100

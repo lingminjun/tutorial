@@ -17,27 +17,6 @@ class TutorialItem(scrapy.Item):
 
     merchant = scrapy.Field()
 
-    skuid0 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid1 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid2 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid3 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid4 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid5 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid6 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid7 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid8 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid9 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid10 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid11 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid12 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid13 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid14 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid15 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid16 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid17 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid18 = scrapy.Field()  # 嵌套 [ItemSKU]
-    skuid19 = scrapy.Field()  # 嵌套 [ItemSKU]
-
     price = scrapy.Field()  # 售价
     orgprice = scrapy.Field()   # 原价 
 
@@ -47,15 +26,38 @@ class TutorialItem(scrapy.Item):
     size = scrapy.Field()
 
     img0 = scrapy.Field()
-    img1 = scrapy.Field()
-    img2 = scrapy.Field()
-    img3 = scrapy.Field()
-    img4 = scrapy.Field()
-    img5 = scrapy.Field()
-    img6 = scrapy.Field()
-    img7 = scrapy.Field()
-    img8 = scrapy.Field()
-    img9 = scrapy.Field()
+
+    colorskuid0 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid1 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid2 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid3 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid4 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid5 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid6 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid7 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid8 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid9 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid10 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid11 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid12 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid13 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid14 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid15 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid16 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid17 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid18 = scrapy.Field()  # 嵌套 [ItemSKU]
+    colorskuid19 = scrapy.Field()  # 嵌套 [ItemSKU]
+    
+    colorimg0 = scrapy.Field()
+    colorimg1 = scrapy.Field()
+    colorimg2 = scrapy.Field()
+    colorimg3 = scrapy.Field()
+    colorimg4 = scrapy.Field()
+    colorimg5 = scrapy.Field()
+    colorimg6 = scrapy.Field()
+    colorimg7 = scrapy.Field()
+    colorimg8 = scrapy.Field()
+    colorimg9 = scrapy.Field()
 
     
     
