@@ -1,18 +1,13 @@
 
 from scrapy import Request, Spider
 from urllib.parse import quote
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from tutorial.items import *
 
 
 class DmozSpider(Spider):
     name = "dmoz"
     allowed_domains = ["list.tmall.com"]
+
     start_urls = [
         "https://list.tmall.com/search_product.htm?q=%C1%AC%D2%C2%C8%B9&sort=s&style=g&type=pc&s=0",
     ]
@@ -33,20 +28,20 @@ class DmozSpider(Spider):
     def __init__(self, **kwargs):
         #  加载 chrome driver, 它的下载地址位于 https://sites.google.com/a/chromium.org/chromedriver/
         super().__init__(**kwargs)
-
         # 代码迁移到middlewares中
         # self.driver = webdriver.Chrome('/Users/lingminjun/chromedriver/chromedriver')
         # self.wait = WebDriverWait(self.driver, 10)
+
    
     #  针对规则的url开始爬取
-    def start_requests(self):
-        for keyword in self.settings.get('KEYWORDS'):
-            print(keyword)
-            for page in range(0, self.settings.get('MAX_PAGE')):
-                offset = page * 60
-                url = "https://list.tmall.com/search_product.htm?q=" + quote(keyword) + "&sort=s&style=g&type=pc&s=" + str(offset)
-                print(url)
-                yield Request(url=url, callback=self.parse)
+    # def start_requests(self):
+    #     for keyword in self.settings.get('KEYWORDS'):
+    #         print(keyword)
+    #         for page in range(0, self.settings.get('MAX_PAGE')):
+    #             offset = page * 60
+    #             url = "https://list.tmall.com/search_product.htm?q=" + quote(keyword) + "&sort=s&style=g&type=pc&s=" + str(offset)
+    #             print(url)
+    #             yield Request(url=url, callback=self.parse)
 
     '''
     # 其他列表
@@ -58,19 +53,22 @@ class DmozSpider(Spider):
     ]
     '''
 
-    #  模拟浏览器页面滚到页面底部的行为
-    def scroll_until_loaded(self):
-        check_height = self.driver.execute_script("return document.body.scrollHeight;")
-        while True:
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            try:
-                self.wait.until(
-                    lambda driver: self.driver.execute_script("return document.body.scrollHeight;") > check_height)
-                check_height = self.driver.execute_script("return document.body.scrollHeight;")
-            except TimeoutException:
-                break
+    # #  模拟浏览器页面滚到页面底部的行为
+    # def scroll_until_loaded(self):
+    #     check_height = self.driver.execute_script("return document.body.scrollHeight;")
+    #     while True:
+    #         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    #         try:
+    #             self.wait.until(
+    #                 lambda driver: self.driver.execute_script("return document.body.scrollHeight;") > check_height)
+    #             check_height = self.driver.execute_script("return document.body.scrollHeight;")
+    #         except TimeoutException:
+    #             break
 
     def parse(self, response):
+
+        print("开始解析数据。。。。。。。。。。。。。。。。。。。。。。")
+
         # 直接在这里等待浏览器滚动到底部实现-----也可以放到middlewares中来实现
         # self.driver.get(response.url)
         # 打开页面后，滑动至页面底部
@@ -151,14 +149,10 @@ class DmozSpider(Spider):
             for b in sel.xpath('div[@class="product-iWrap"]/div[@class="productThumb clearfix"]/div[@class="proThumb-wrap"]/p[@class="ks-switchable-content"]/b'):  # extracts all <p> inside
                 # print b.extract()
        
-                item['skuid'+idx] = b.xpath('./@data-sku').extract()
+                item['skuid'+str(idx)] = b.xpath('./@data-sku').extract()
                 idx = idx + 1
                 # item['img0'] = "https://" + b.xpath('/img@src').extract()
          
-                
-
-            print(item)
-
             yield item
 
 
