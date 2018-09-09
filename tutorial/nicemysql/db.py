@@ -182,12 +182,11 @@ class MysqlConn(object):
         # print(lst)
         return self.execute(sql, lst)
 
-    def insert(self, table, fields, condition=None, param=None):
+    def insert(self, table, fields):
         """
         @summary: 更新数据表记录
         @param table: 表名字
         @param fields: 要更新的 键值对 {}/字典
-        @param condition: string where子句子 注入风险，故参数请使用param
         @param param: 要更新的条件参数值 tuple/list
         @return: count 受影响的行数
         """
@@ -213,17 +212,47 @@ class MysqlConn(object):
         valuestr = valuestr + ')'
         sql = sql + valuestr
 
-        # 条件
-        if condition is not None:
-            sql = sql + ' where ' + condition
-
         sql = sql + ' ;'
 
-        # 参数
-        if param is not None:
-            for i in range(len(param)): 
-                pm = param[i]
-                lst.append(pm)
+        # print(lst)
+        return self.execute(sql, lst)
+
+    def upinsert(self, table, fields):
+        """
+        @summary: 插入或者更新记录（必须有唯一主键）
+        @param table: 表名字
+        @param fields: 要更新的 键值对 {}/字典
+        @return: count 受影响的行数
+        """
+        if fields is None:
+            return 0
+        #  insert into t1(a,b) values( '3','r5') on duplicate key update b='r5'; 
+        sql = 'insert into ' + table + '('
+        valuestr = ' values('
+        updatestr = ' on duplicate key update '
+        first = True
+        lst = []
+        for key in fields:
+            value = fields[key]
+            if first :
+                first = False
+            else:
+                sql = sql + ', '
+                valuestr = valuestr + ', '
+                updatestr = updatestr + ', '
+            sql = sql + key
+            valuestr = valuestr + '%s'
+            updatestr = updatestr + key + ' = %s'
+            lst.append(value)
+
+        # update语句参数重复加入
+        for key in fields:
+            value = fields[key]
+            lst.append(value)
+
+        sql = sql + ') '
+        valuestr = valuestr + ')'
+        sql = sql + valuestr + updatestr + ' ;'
 
         # print(lst)
         return self.execute(sql, lst)
