@@ -1,5 +1,5 @@
 Scrapy==1.5.1      
-scrapy-splash==0.7.2
+scrapy-splash==0.8.0
 selenium==3.14.0
 urllib3==1.23
 DBUtils==1.3 
